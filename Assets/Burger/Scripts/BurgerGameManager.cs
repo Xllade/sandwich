@@ -15,9 +15,9 @@ namespace Burger
         public float MoveSpeed { get; private set; } = 0.2f;
         private float _timeLimit = 10f;
         private float _currentTime;
-        public bool finishInTime = true;
-        public bool noMoveCancel = true;
-        public bool noUndo = true;
+        public bool finishInTime { get; set; } = true;
+        public bool noMoveCancel { get; set; } = true;
+        public bool noUndo { get; set; } = true;
 
         public UnityAction OnStartMove;
         public UnityAction<MoveData> OnFinishMove;

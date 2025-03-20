@@ -9,6 +9,8 @@ namespace Burger
 {
     public class BurgerZone : MonoBehaviour, IDragHandler, IEndDragHandler
     {
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _sfxClip;
         private BurgerGameManager _burgerGameManager;
         private BurgerZone[] _burgerZones = new BurgerZone[4]{null, null, null, null};
         private List<BurgerPart> _burgerPartList = new List<BurgerPart>();
@@ -171,6 +173,7 @@ namespace Burger
             moveData.toRot = GetMoveTargetRotation(directionType);
 
             Move(moveData, isCancel ? EMoveType.Cancel : EMoveType.Default);
+            _audioSource.PlayOneShot(_sfxClip);
         }
 
         public void Move(MoveData moveData, EMoveType moveType)
@@ -235,6 +238,7 @@ namespace Burger
                         OnFinishMoveCancel?.Invoke(moveData);
                         break;
                 }
+                if (FindObjectOfType<GameManager>().GameData.vibrate) Handheld.Vibrate();
             }
         }
         #endregion

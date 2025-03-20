@@ -9,10 +9,11 @@ namespace Burger
         [SerializeField] private GameManagerView _view;
         [SerializeField] private SettingsManager _settingsManager;
         [SerializeField] private LevelManager _levelManager;
+        [SerializeField] private AudioMixerManager _audioMixerManager;
         [SerializeField] private BurgerGameManager[] _levels;
         private BurgerGameManager _level;
         private int _levelIndex;
-        [SerializeField] private GameData _gameData;
+        private GameData _gameData;
         public GameData GameData => _gameData;
 
         void Awake()
@@ -20,8 +21,7 @@ namespace Burger
             void OnSuccessLoadGameData()
             {
                 Debug.Log("Success load game data");
-                SetLevel(_gameData.levelIndex);
-                InitView();
+                Init();
             }
             void OnFailedLoadGameData()
             {
@@ -34,11 +34,22 @@ namespace Burger
                     var levelData = new LevelData();
                     levelData.starCount = 0;
                     _gameData.levelData.Add(levelData);
+                    _gameData.bgmVolume = 0.5f;
+                    _gameData.sfxVolume = 1;
+                    _gameData.vibrate = true;
                 }
-                SetLevel(_gameData.levelIndex);
-                InitView();
+                Init();
             }
             LoadGameData(OnSuccessLoadGameData, OnFailedLoadGameData);
+        }
+
+        private void Init()
+        {
+            SetLevel(_gameData.levelIndex);
+            InitView();
+            _settingsManager.LoadSettings();
+            _audioMixerManager.SetBGMVolume(_gameData.bgmVolume);
+            _audioMixerManager.SetSFXVolume(_gameData.sfxVolume);
         }
 
         private void LoadGameData(UnityAction onSuccessLoad, UnityAction onFailedLoad)
