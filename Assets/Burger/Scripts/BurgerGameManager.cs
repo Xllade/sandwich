@@ -16,7 +16,7 @@ namespace Burger
 
         public UnityAction OnStartMove;
         public UnityAction<MoveData> OnFinishMove;
-        public UnityAction OnLevelComplete;
+        public UnityAction OnFinishLevel;
 
         void Awake()
         {
@@ -68,6 +68,7 @@ namespace Burger
             if (_moveDatas.Count == _burgerZones.Length - 1)
             {
                 _isLevelComplete = true;
+                OnFinishLevel?.Invoke();
             }
             OnFinishMove?.Invoke(moveData);
         }
@@ -88,14 +89,14 @@ namespace Burger
         }
         #endregion
 
-        private void Undo()
+        public void Undo()
         {
             if (_moveDatas.Count == 0 || _isLevelComplete) return;
             var lastMoveData = _moveDatas[_moveDatas.Count - 1];
             lastMoveData.toBurgerZone.Move(lastMoveData, EMoveType.Undo);
         }
 
-        private void Retry()
+        public void Retry()
         {
             if (_moveDatas.Count == 0 || _isLevelComplete) return;
             IEnumerator DoRetry()
