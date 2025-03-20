@@ -13,10 +13,15 @@ namespace Burger
         public int MoveRemaining => _burgerZones.Length - _moveDatas.Count - 1;
         private bool _isLevelComplete;
         public float MoveSpeed { get; private set; } = 0.2f;
+        private float _timeLimit = 10f;
+        private float _currentTime;
+        public bool finishInTime = true;
+        public bool noMoveCancel = true;
+        public bool noUndo = true;
 
         public UnityAction OnStartMove;
         public UnityAction<MoveData> OnFinishMove;
-        public UnityAction OnFinishLevel;
+        public UnityAction<bool, bool, bool> OnFinishLevel;
 
         void Awake()
         {
@@ -48,8 +53,9 @@ namespace Burger
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.U)) Undo();
-            if (Input.GetKeyDown(KeyCode.R)) Retry();
+            if (_isLevelComplete) return;
+            _currentTime += Time.deltaTime;
+            finishInTime = _currentTime < _timeLimit;
         }
 
         #region Callback
@@ -68,7 +74,7 @@ namespace Burger
             if (_moveDatas.Count == _burgerZones.Length - 1)
             {
                 _isLevelComplete = true;
-                OnFinishLevel?.Invoke();
+                OnFinishLevel?.Invoke(finishInTime, noMoveCancel, noUndo);
             }
             OnFinishMove?.Invoke(moveData);
         }
@@ -94,6 +100,7 @@ namespace Burger
             if (_moveDatas.Count == 0 || _isLevelComplete) return;
             var lastMoveData = _moveDatas[_moveDatas.Count - 1];
             lastMoveData.toBurgerZone.Move(lastMoveData, EMoveType.Undo);
+            noUndo = false;
         }
 
         public void Retry()
@@ -106,6 +113,8 @@ namespace Burger
                     Undo();
                     yield return new WaitForSeconds(MoveSpeed + 0.01f);
                 }
+                noMoveCancel = noUndo = true;
+                _currentTime = 0;
             }
             StartCoroutine(DoRetry());
         }

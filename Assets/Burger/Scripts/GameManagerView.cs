@@ -18,6 +18,7 @@ namespace Burger
         [SerializeField] private Button _undoButton;
         [SerializeField] private Button _retryLevelButton;
         [SerializeField] private Button _nextLevelButton;
+        [SerializeField] private Image[] _levelFinishStars;
 
         public void SetLevelText(string text)
         {
@@ -72,6 +73,15 @@ namespace Burger
         public void AddOnClickRetryLevelButton(UnityAction onClick)
         {
             _retryLevelButton.onClick.AddListener(onClick);
+        }
+
+        public void SetLevelFinishStars(bool[] stars)
+        {
+            for (int i = 0; i < _levelFinishStars.Length; i++)
+            {
+                int index = i;
+                _levelFinishStars[index].color = stars[index] ? Color.yellow : Color.white;
+            }
         }
     }
 }

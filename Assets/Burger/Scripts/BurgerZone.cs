@@ -175,7 +175,6 @@ namespace Burger
 
         public void Move(MoveData moveData, EMoveType moveType)
         {
-            Debug.Log($"Move {moveData.fromBurgerZone.name} to {moveData.toBurgerZone.name}. moveType: {moveType}");
             var moverGO = new GameObject();
             moverGO.name = "Mover";
             moverGO.transform.position = moveData.burgerParts[0].transform.position;
@@ -196,6 +195,7 @@ namespace Burger
 
             if (moveType == EMoveType.Cancel)
             {
+                _burgerGameManager.noMoveCancel = false;
                 Sequence.Create()
                     .Chain(Tween.Position(moverGO.transform, startPos, endPos, _moveSpeed, Ease.Linear))
                     .Group(Tween.EulerAngles(moverGO.transform, startRot, endRot, _moveSpeed, Ease.Linear))

@@ -8,6 +8,7 @@ namespace Burger
         [SerializeField] private LevelManagerView _view;
         [SerializeField] private Transform _selectLevelButtonParent;
         [SerializeField] private SelectLevelButton _selectLevelButtonPrefab;
+        [SerializeField] private GameManager _gameManager;
 
         public UnityAction<int> OnSelectLevel;
 
@@ -27,9 +28,8 @@ namespace Burger
             {
                 int index = i;
                 var selectLevelButton = Instantiate(_selectLevelButtonPrefab, _selectLevelButtonParent);
-                selectLevelButton.Setup($"{index + 1}", 0, () => 
+                selectLevelButton.Setup($"{index + 1}", _gameManager.GameData.levelData[index].starCount, () => 
                 {
-                    Debug.Log("select level "+index);
                     OnSelectLevel?.Invoke(index);
                 });
                 selectLevelButton.gameObject.SetActive(true);
